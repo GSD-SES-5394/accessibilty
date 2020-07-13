@@ -165,8 +165,8 @@ ggplot(info) +
   scale_x_discrete(name = "Mode") +
   scale_y_continuous(name = "Number of jobs per square km\nwithin 30-minute travel shed", 
                      trans = "log", 
-                     breaks = c(50, 500, 5000, 50000),
-                     labels = c("50", "500", "5,000", "50,000")) +
+                     breaks = c(5, 50, 500, 5000, 50000),
+                     labels = c("5", "50", "500", "5,000", "50,000")) +
   theme_bw()
 ```
 
@@ -180,7 +180,7 @@ ggplot(info) +
   scale_x_discrete(name = "Mode") +
   scale_y_continuous(name = "Number of jobs within 30-minute travel shed", 
                      trans = "log", 
-                     breaks = c(50, 500, 5000, 50000),
-                     labels = c("50", "500", "5,000", "50,000")) +
+                     breaks = c(5, 50, 500, 5000, 50000, 500000),
+                     labels = c("5", "50", "500", "5,000", "50,000", "500,000")) +
   theme_bw()
 ```
