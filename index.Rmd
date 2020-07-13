@@ -88,9 +88,7 @@ info <- tibble(site = c("Downtown",
 
 Accessibility can be described in terms of two components: mobility and proximity. 
 
-#### Mobility 
-
-Mobilty is the ease of travel. You might also think of it as the inverse of the cost of travel. The primary cost of movement is generally travel time, but it might be appropriate to consider other costs as well, such as discomfort or monetary cost.
+**Mobilty** is the ease of travel. You might also think of it as the inverse of the cost of travel. The primary cost of movement is generally travel time, but it might be appropriate to consider other costs as well, such as discomfort or monetary cost.
 
 *Mobility is determined by characteristics of the transportation network.* 
 
@@ -102,13 +100,11 @@ Ways to increase mobility
 
 A useful site-leve mobility metric might be the total area (e.g. in square kilometers) that can be reached within a unit of time.
 
-#### Proximity 
-
-Proximity is the distance between a person and the locations of all the activities they might want to participate in. It is a characteristics of the land use patterns around a site.
+**Proximity** is the distance between a person and the locations of all the activities they might want to participate in. It is a characteristics of the land use patterns around a site.
 
 The proximity component of accessibility is commonly described in terms of densities (e.g. number of jobs per square kilometer). 
 
-#### Relationships among proximity, mobility, and accessibilty
+**Relationships among proximity, mobility, and accessibilty**
 
 Using the following definitions:
 
@@ -118,30 +114,30 @@ Using the following definitions:
 
 $Accessibility = Mobility\times Proximity$
 
-This means you can increase accessibility by increasing either mobility or proximity, but be careful. Particularly for cars, increases in mobility are often accompanied by counteracting reductions in proximity. 
+This means you can increase accessibility by increasing either mobility or proximity, but be careful. Particularly for cars, increases in mobility are often accompanied by counteracting reductions in proximity, and vice versa. 
 
-# Three sites in the Seattle area
+# Example: Three sites in the Seattle area
 ```{r site map, echo = FALSE}
-lbl_ballard_drive <- paste(sep = "<br/>",
-  "<b>30-minute driveshed</b>",
-  "<b>Area:</b> 90 square km",
-  "<b>Job density:</b> 3,695 jobs per km",
-  "<b>Number of jobs:</b> 332,261") %>% 
-  lapply(htmltools::HTML)
+Ballard_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/ballard.html'>Ballard</a></b>", htmltools::HTML)
+
+Downtown_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/downtown.html'>Downtown</a></b>", htmltools::HTML)
+
+Kirkland_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/kirkland.html'>Kirkland</a></b>", htmltools::HTML)
+
 
 sites = leaflet(dwntwn_drive) %>%
    addProviderTiles(providers$Stamen.Toner) %>%
   addPopups(lng = Ballard["lon"],
             lat = Ballard["lat"], 
-            "Ballard",
+            Ballard_link,
     options = popupOptions(closeButton = FALSE)) %>%
   addPopups(lng = Downtown["lon"],
             lat = Downtown["lat"], 
-            "Downtown",
+            Downtown_link,
     options = popupOptions(closeButton = FALSE)) %>%
   addPopups(lng = Kirkland["lon"],
             lat = Kirkland["lat"], 
-            "Kirkland",
+            Kirkland_link,
     options = popupOptions(closeButton = FALSE)) 
 
 sites
