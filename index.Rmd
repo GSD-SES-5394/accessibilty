@@ -116,7 +116,7 @@ $Accessibility = Mobility\times Proximity$
 
 This means you can increase accessibility by increasing either mobility or proximity, but be careful. Particularly for cars, increases in mobility are often accompanied by counteracting reductions in proximity, and vice versa. 
 
-# Example: Three sites in the Seattle area
+# Example: 3 sites in the Seattle area
 ```{r site map, echo = FALSE}
 Ballard_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/ballard.html'>Ballard</a></b>", htmltools::HTML)
 
