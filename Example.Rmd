@@ -1,0 +1,120 @@
+---
+title: "Accessibilty Lecture"
+author: "Carole Voulgaris"
+date: "7/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tigris)
+library(osmdata)
+library(opentripplanner)
+library(tidyverse)
+library(leaflet)
+library(sf)
+```
+
+## What is accessibilty?
+
+The ease with which a person can fully participate in the economic, civic, and social life of their society. Accessibility can be described in terms of three components:
+
+* Connectivity
+* Mobility
+* Proximity
+
+**Question to consider:** Is travel a derived demand?
+
+## Connectivity
+
+The ability to participate in activities without traveling.
+
+## Mobility 
+
+The ability to move through space. Can be measured as:
+
+* Distance you can travel per unit of time (speed)
+* Area within 30 minutes
+* Distance you can travel for a cost of $20
+* (all of these are mode-dependent)
+
+```{r, echo = FALSE}
+Site <- c(lon = -71.149450, lat = 42.208314)
+
+state_plane <- "+proj=lcc +lat_1=41.71666666666667 +lat_2=42.68333333333333 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +units=m +no_defs"
+
+East_Mass <- counties(state = "MA", class = "sf") %>%
+  filter(GEOID == "25017" |
+         GEOID == "25021" |
+         GEOID == "25025")
+
+box <- st_bbox(East_Mass)
+```
+
+```{r}
+
+roads <- opq(bbox = box, timeout = 60) %>%
+  add_osm_feature(key = 'highway') %>% 
+  osmdata_xml(file = 'OTP/graphs/default/MA_Roads.osm')
+
+path_data <- file.path(getwd(), "OTP")
+path_otp <- paste(path_data,"otp.jar",sep = "/")
+#path_otp <- otp_dl_jar(path_data)
+
+# You only need to run this line once.
+
+log1 <- otp_build_graph(otp = path_otp, dir = path_data, memory = 1024) 
+```
+
+```{r}
+
+log2 <- otp_setup(otp = path_otp, dir = path_data)
+
+# Connect to opentripplanner
+otpcon <- otp_connect()
+```
+
+```{r}
+
+drive_30_min <- otp_isochrone(otpcon = otpcon, 
+                              fromPlace = Site,
+                              mode = "CAR",
+                              cutoffSec = 1800) %>%
+  st_transform(crs = state_plane)
+
+isochrones = leaflet(drive_30_min,
+                      options = leafletOptions(minZoom = 14,
+                                               maxZoom = 18)) %>%
+  addProviderTiles(providers$Stamen.Toner) %>%
+  setView(lat = Site["lat"], 
+          lng = Site["lon"],
+          zoom = 14) %>%
+  addPolygons(fill = FALSE, color = "black")
+
+
+```
+
+## Proximity metrics
+
+The amount of space between a location and opportunities to participate in activities. Can be measured as:
+
+* Distance required to reach a destination
+* Number of destinations within 10 miles
+
+## What do we mean by distance?
+
+* Euclidean distance
+* Network distance (mode-dependent if some links are restricted by mode)
+
+## Accessibilty metrics
+
+* Number of opportunities within 30 minutes
+* Total number of opportunities, weighted based on how long it takes to reach them.
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

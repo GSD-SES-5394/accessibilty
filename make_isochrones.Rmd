@@ -1,0 +1,170 @@
+---
+title: "Accessibility Lecture"
+author: "Carole Voulgaris"
+date: "7/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(leaflet)
+library(sf)
+library(htmltools)
+library(htmlwidgets)
+library(lehdr)
+library(tidycensus)
+library(tigris)
+```
+
+### Example 1: Site in Ballard neighborhood of Seattle
+
+```{r, echo=FALSE}
+lbl_ballard_drive <- paste(sep = "<br/>",
+  "<b>30-minute driveshed</b>",
+  "<b>Area:</b> 90 square km",
+  "<b>Job density:</b> 3,695 jobs per km",
+  "<b>Number of jobs:</b> 332,261") %>% 
+  lapply(htmltools::HTML)
+
+lbl_ballard_transit <- paste(sep = "<br/>",
+  "<b>30-minute transitshed</b>",
+  "<b>Area:</b> 28.7 square km",
+  "<b>Job density:</b> 1,806 jobs per km",
+  "<b>Number of jobs:</b> 51,828") %>% 
+  lapply(htmltools::HTML)
+
+lbl_ballard_walk <- paste(sep = "<br/>",
+  "<b>30-minute walkshed</b>",
+  "<b>Area:</b> 8.5 square km",
+  "<b>Job density:</b> 2,054 jobs per km",
+  "<b>Number of jobs:</b> 17,414") %>% 
+  lapply(htmltools::HTML)
+
+ballard_iso = leaflet(Ballard_drive) %>%
+  addPolygons(color = NA, fillColor = "gray",
+              label = lbl_ballard_drive,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addPolygons(data = Ballard_transit, 
+              color = NA, fillColor = "gray",
+              label = lbl_ballard_transit,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addPolygons(data = Ballard_walk, 
+              color = NA, fillColor = "gray",
+              label = lbl_ballard_walk,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addCircleMarkers(lng = Ballard["lon"],
+                   lat = Ballard["lat"],
+                   radius = 3,
+                   color = NA,
+                   fillColor = "black",
+                   fillOpacity = 1) %>%
+  addProviderTiles(providers$Stamen.Toner) %>%
+  setView(lng = as.numeric(Ballard["lon"]),
+          lat = as.numeric(Ballard["lat"]),
+          zoom = 10)
+
+saveWidget(ballard_iso, file="ballard.html")
+```
+
+### Example 2: Site in downtown Seattle
+
+```{r, echo=FALSE}
+lbl_dwntwn_drive <- paste(sep = "<br/>",
+  "<b>30-minute driveshed</b>",
+  "<b>Area:</b> 456 square km",
+  "<b>Job density:</b> 2,308 jobs per km",
+  "<b>Number of jobs:</b> 1,052,026") %>% 
+  lapply(htmltools::HTML)
+
+lbl_dwntwn_transit <- paste(sep = "<br/>",
+  "<b>30-minute transitshed</b>",
+  "<b>Area:</b> 61.3 square km",
+  "<b>Job density:</b> 7,758 jobs per km",
+  "<b>Number of jobs:</b> 475,303") %>% 
+  lapply(htmltools::HTML)
+
+lbl_dwntwn_walk <- paste(sep = "<br/>",
+  "<b>30-minute walkshed</b>",
+  "<b>Area:</b> 8.7 square km",
+  "<b>Job density:</b> 32,538 jobs per km",
+  "<b>Number of jobs:</b> 282,405") %>% 
+  lapply(htmltools::HTML)
+
+dwntwn_iso = leaflet(dwntwn_drive) %>%
+  addPolygons(color = NA, fillColor = "gray",
+              label = lbl_dwntwn_drive,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addPolygons(data = dwntwn_transit, 
+              color = NA, fillColor = "gray",
+              label = lbl_dwntwn_transit,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addPolygons(data = dwntwn_walk, 
+              color = NA, fillColor = "gray",
+              label = lbl_dwntwn_walk,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addCircleMarkers(lng = Downtown["lon"],
+                   lat = Downtown["lat"],
+                   radius = 3,
+                   color = NA,
+                   fillColor = "black",
+                   fillOpacity = 1) %>%
+  addProviderTiles(providers$Stamen.Toner) %>%
+  setView(lng = as.numeric(Downtown["lon"]),
+          lat = as.numeric(Downtown["lat"]),
+          zoom = 10)
+
+
+saveWidget(dwntwn_iso, file="downtown.html")
+```
+
+### Example 3: Suburban site (Kirkland)
+
+```{r, echo=FALSE}
+lbl_Kirkland_drive <- paste(sep = "<br/>",
+  "<b>30-minute driveshed</b>",
+  "<b>Area:</b> 276 square km",
+  "<b>Job density:</b> 1,760 jobs per km",
+  "<b>Number of jobs:</b> 486,685") %>% 
+  lapply(htmltools::HTML)
+
+lbl_Kirkland_transit <- paste(sep = "<br/>",
+  "<b>30-minute transitshed</b>",
+  "<b>Area:</b> 19.3 square km",
+  "<b>Job density:</b> 1,514 jobs per km",
+  "<b>Number of jobs:</b> 29,171") %>% 
+  lapply(htmltools::HTML)
+
+lbl_Kirkland_walk <- paste(sep = "<br/>",
+  "<b>30-minute walkshed</b>",
+  "<b>Area:</b> 7 square km",
+  "<b>Job density:</b> 2,166 jobs per km",
+  "<b>Number of jobs:</b> 15,165") %>% 
+  lapply(htmltools::HTML)
+
+kirkland_iso = leaflet(kirkland_drive) %>%
+  addPolygons(color = NA, fillColor = "gray",
+              label = lbl_Kirkland_drive,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addPolygons(data = kirkland_transit, 
+              color = NA, fillColor = "gray",
+              label = lbl_Kirkland_transit,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addPolygons(data = kirkland_walk, 
+              color = NA, fillColor = "gray",
+              label = lbl_Kirkland_walk,
+              highlightOptions = highlightOptions(fillColor = "red")) %>%
+  addCircleMarkers(lng = Kirkland["lon"],
+                   lat = Kirkland["lat"],
+                   radius = 3,
+                   color = NA,
+                   fillColor = "black",
+                   fillOpacity = 1) %>%
+  addProviderTiles(providers$Stamen.Toner) %>%
+  setView(lng = as.numeric(Kirkland["lon"]),
+          lat = as.numeric(Kirkland["lat"]),
+          zoom = 10)
+
+saveWidget(kirkland_iso, file="kirkland.html")
+```

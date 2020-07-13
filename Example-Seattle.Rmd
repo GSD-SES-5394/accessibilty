@@ -1,0 +1,123 @@
+---
+title: "Accessibilty Lecture"
+author: "Carole Voulgaris"
+date: "7/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tigris)
+library(osmdata)
+library(opentripplanner)
+library(tidyverse)
+library(leaflet)
+library(sf)
+```
+
+## What is accessibilty?
+
+The ease with which a person can fully participate in the economic, civic, and social life of their society. Accessibility can be described in terms of three components:
+
+* Connectivity
+* Mobility
+* Proximity
+
+**Question to consider:** Is travel a derived demand?
+
+## Connectivity
+
+The ability to participate in activities without traveling.
+
+## Mobility 
+
+The ability to move through space. Can be measured as:
+
+* Distance you can travel per unit of time (speed)
+* Distance you can travel per dollar
+* Area within 30 minutes
+* (all of these are mode-dependent)
+
+```{r, echo = FALSE}
+Ballard <- c(lon = -122.387519, lat = 47.668740)
+Downtown <- c(lon = -122.339258, lat = 47.611858)
+Kirkland <- c(lon = -122.168838, lat = 47.723188)
+box <- st_bbox(King_CO)
+
+path_data <- file.path(getwd(), "OTP")
+path_otp <- paste(path_data,"otp.jar",sep = "/")
+
+otp_setup(otp = path_otp, dir = path_data, memory = 1024)
+
+# Connect to opentripplanner
+otpcon <- otp_connect()
+```
+
+```{r}
+
+Downtown_drive_30 <- otp_isochrone(otpcon = otpcon, 
+                              fromPlace = Downtown,
+                              mode = "CAR",
+                              cutoffSec = 1800) %>%
+  st_transform(crs = "+proj=longlat +datum=WGS84")
+
+Downtown_walk_30 <- otp_isochrone(otpcon = otpcon, 
+                              fromPlace = Downtown,
+                              mode = "WALK",
+                              maxWalkDistance = 6000,
+                              cutoffSec = 1800) %>%
+  st_transform(crs = "+proj=longlat +datum=WGS84")
+
+Downtown_transit_30 <- otp_isochrone(otpcon = otpcon, 
+                              fromPlace = Downtown,
+                              mode = c("WALK", "TRANSIT"),
+                              maxWalkDistance = 6000,
+                              cutoffSec = 1800) %>%
+  st_transform(crs = "+proj=longlat +datum=WGS84")
+
+
+isochrones = leaflet(Downtown_drive_30) %>%
+  addPolygons(color = NA, fillColor = "red") %>%
+  #addPolygons(data = Kirkland_transit_30, 
+  #            color = NA, fillColor = "green") %>%
+  #addPolygons(data = Kirkland_walk_30, 
+  #            color = NA, fillColor = "blue") %>%
+  #addCircleMarkers(lng = Kirkland["lon"],
+  #                 lat = Kirkland["lat"],
+  #                 radius = 3,
+  #                 color = NA,
+  #                 fillColor = "Red",
+  #                 fillOpacity = 1) %>%
+  addProviderTiles(providers$Stamen.Toner)
+isochrones
+
+st_write(Downtown_drive_30, "dwntwn_drive.shp")
+st_write(Downtown_walk_30, "dwntwn_walk.shp")
+st_write(Downtown_transit_30, "dwntwn_transit.shp")
+
+```
+
+## Proximity metrics
+
+The amount of space between a location and opportunities to participate in activities. Can be measured as:
+
+* Distance required to reach a destination
+* Number of destinations within 10 miles
+
+## What do we mean by distance?
+
+* Euclidean distance
+* Network distance (mode-dependent if some links are restricted by mode)
+
+## Accessibilty metrics
+
+* Number of opportunities within 30 minutes
+* Total number of opportunities, weighted based on how long it takes to reach them.
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

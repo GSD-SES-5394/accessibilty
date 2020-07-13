@@ -1,0 +1,190 @@
+---
+title: "Introduction to Accessibility"
+author: "Carole Voulgaris"
+output:  
+  html_document:  
+    toc: true  
+    toc_float: true
+    toc_depth: 4
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(leaflet)
+library(sf)
+library(htmltools)
+library(htmlwidgets)
+library(lehdr)
+library(tidycensus)
+library(tigris)
+
+Ballard <- c(lon = -122.387519, lat = 47.668740)
+Downtown <- c(lon = -122.332594, lat = 47.609336)
+Kirkland <- c(lon = -122.168838, lat = 47.723188)
+
+Ballard_drive <- st_read("Ballard_drive.shp")
+Ballard_transit <- st_read("Ballard_transit.shp")
+Ballard_walk <- st_read("Ballard_walk.shp")
+
+dwntwn_drive <- st_read("dwntwn_drive.shp")
+dwntwn_transit <- st_read("dwntwn_transit.shp")
+dwntwn_walk <- st_read("dwntwn_walk.shp")
+
+kirkland_drive <- st_read("kirkland_drive.shp")
+kirkland_transit <- st_read("kirkland_transit.shp")
+kirkland_walk <- st_read("kirkland_walk.shp")
+
+jobs <- grab_lodes(state = "WA", year = 2017, lodes_type = "wac",
+                   job_type = "JT00", segment = "S000") %>%
+  mutate(GEOID10 = w_geocode)
+blocks <- blocks(state = "WA", county = "King", class = "sf") %>%
+  left_join(jobs) %>%
+  st_transform(crs = st_crs(kirkland_drive))
+
+info <- tibble(site = c("Downtown", 
+                        "Ballard",
+                        "Kirkland",
+                        "Downtown", 
+                        "Ballard",
+                        "Kirkland",
+                        "Downtown", 
+                        "Ballard",
+                        "Kirkland"),
+               mode = c("Drive",
+                        "Drive",
+                        "Drive",
+                        "Transit",
+                        "Transit",
+                        "Transit",
+                        "Walk",
+                        "Walk",
+                        "Walk"),
+               area_km = c(as.numeric(st_area(dwntwn_drive))/1000000,
+                           as.numeric(st_area(Ballard_drive))/1000000,
+                           as.numeric(st_area(kirkland_drive))/1000000,
+                           as.numeric(st_area(dwntwn_transit))/1000000,
+                           as.numeric(st_area(Ballard_transit))/1000000,
+                           as.numeric(st_area(kirkland_transit))/1000000,
+                           as.numeric(st_area(dwntwn_walk))/1000000,
+                           as.numeric(st_area(Ballard_walk))/1000000,
+                           as.numeric(st_area(kirkland_walk))/1000000),
+               jobs = c(sum(blocks[dwntwn_drive,]$C000, na.rm = TRUE),
+                        sum(blocks[Ballard_drive,]$C000, na.rm = TRUE),
+                        sum(blocks[kirkland_drive,]$C000, na.rm = TRUE),
+                        sum(blocks[dwntwn_transit,]$C000, na.rm = TRUE),
+                        sum(blocks[Ballard_transit,]$C000, na.rm = TRUE),
+                        sum(blocks[kirkland_transit,]$C000, na.rm = TRUE),
+                        sum(blocks[dwntwn_walk,]$C000, na.rm = TRUE),
+                        sum(blocks[Ballard_walk,]$C000, na.rm = TRUE),
+                        sum(blocks[kirkland_walk,]$C000, na.rm = TRUE))) %>%
+  mutate(jobs_per_km = jobs / area_km)
+```
+# What is accessibilty?
+
+**The ease with which a person can fully participate in the economic, civic, and social life of their society**
+
+Accessibility can be described in terms of two components: mobility and proximity. 
+
+#### Mobility 
+
+Mobilty is the ease of travel. You might also think of it as the inverse of the cost of travel. The primary cost of movement is generally travel time, but it might be appropriate to consider other costs as well, such as discomfort or monetary cost.
+
+*Mobility is determined by characteristics of the transportation network.* 
+
+Ways to increase mobility
+
+* Increase vehicle speeds (for drivers)
+* Increase transit frequency and covereage (for transit riders)
+* Increase route directness (for pedestrians)
+
+A useful site-leve mobility metric might be the total area (e.g. in square kilometers) that can be reached within a unit of time.
+
+#### Proximity 
+
+Proximity is the distance between a person and the locations of all the activities they might want to participate in. It is a characteristics of the land use patterns around a site.
+
+The proximity component of accessibility is commonly described in terms of densities (e.g. number of jobs per square kilometer). 
+
+#### Relationships among proximity, mobility, and accessibilty
+
+Using the following definitions:
+
+* Mobility = The total area that is reachable within a unit of time,
+* Proximity = The total number of opportunities within that area, and
+* Accessibility = The total number of opportunities that are reachable within a unit of time,
+
+$Accessibility = Mobility\times Proximity$
+
+This means you can increase accessibility by increasing either mobility or proximity, but be careful. Particularly for cars, increases in mobility are often accompanied by counteracting reductions in proximity. 
+
+# Three sites in the Seattle area
+```{r site map, echo = FALSE}
+lbl_ballard_drive <- paste(sep = "<br/>",
+  "<b>30-minute driveshed</b>",
+  "<b>Area:</b> 90 square km",
+  "<b>Job density:</b> 3,695 jobs per km",
+  "<b>Number of jobs:</b> 332,261") %>% 
+  lapply(htmltools::HTML)
+
+sites = leaflet(dwntwn_drive) %>%
+   addProviderTiles(providers$Stamen.Toner) %>%
+  addPopups(lng = Ballard["lon"],
+            lat = Ballard["lat"], 
+            "Ballard",
+    options = popupOptions(closeButton = FALSE)) %>%
+  addPopups(lng = Downtown["lon"],
+            lat = Downtown["lat"], 
+            "Downtown",
+    options = popupOptions(closeButton = FALSE)) %>%
+  addPopups(lng = Kirkland["lon"],
+            lat = Kirkland["lat"], 
+            "Kirkland",
+    options = popupOptions(closeButton = FALSE)) 
+
+sites
+```
+
+## Differences in mobility
+```{r, echo = FALSE}
+ggplot(info) +
+  geom_bar(aes(x = mode, y = area_km, fill = site), 
+           stat = "identity",
+           position = "dodge") +
+  scale_fill_grey(name = "Site") +
+  scale_x_discrete(name = "Mode") +
+  scale_y_continuous(name = "Area reachable within 30 minutes (square km)") +
+  theme_bw()
+```
+
+## Differences in proximity
+```{r, echo = FALSE}
+ggplot(info) +
+  geom_bar(aes(x = mode, y = jobs_per_km, fill = site), 
+           stat = "identity",
+           position = "dodge") +
+  scale_fill_grey(name = "Site") +
+  scale_x_discrete(name = "Mode") +
+  scale_y_continuous(name = "Number of jobs per square km\nwithin 30-minute travel shed", 
+                     trans = "log", 
+                     breaks = c(50, 500, 5000, 50000),
+                     labels = c("50", "500", "5,000", "50,000")) +
+  theme_bw()
+```
+
+## Differences in accessibility
+```{r, echo = FALSE}
+ggplot(info) +
+  geom_bar(aes(x = mode, y = jobs, fill = site), 
+           stat = "identity",
+           position = "dodge") +
+  scale_fill_grey(name = "Site") +
+  scale_x_discrete(name = "Mode") +
+  scale_y_continuous(name = "Number of jobs within 30-minute travel shed", 
+                     trans = "log", 
+                     breaks = c(50, 500, 5000, 50000),
+                     labels = c("50", "500", "5,000", "50,000")) +
+  theme_bw()
+```
