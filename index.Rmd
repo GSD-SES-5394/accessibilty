@@ -118,12 +118,11 @@ This means you can increase accessibility by increasing either mobility or proxi
 
 # Example: 3 sites in the Seattle area
 ```{r site map, echo = FALSE}
-Ballard_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/ballard.html'>Ballard</a></b>", htmltools::HTML)
+Ballard_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/ballard.html' target='_blank'>Ballard</a></b>", htmltools::HTML)
 
-Downtown_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/downtown.html'>Downtown</a></b>", htmltools::HTML)
+Downtown_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/downtown.html' target='_blank'>Downtown</a></b>", htmltools::HTML)
 
-Kirkland_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/kirkland.html'>Kirkland</a></b>", htmltools::HTML)
-
+Kirkland_link <- lapply("<b><a href='https://gsd-ses-5394.github.io/accessibilty/kirkland.html' target='_blank'>Kirkland</a></b>", htmltools::HTML)
 
 sites = leaflet(dwntwn_drive) %>%
    addProviderTiles(providers$Stamen.Toner) %>%

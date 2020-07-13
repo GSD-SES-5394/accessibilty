@@ -60,10 +60,7 @@ ballard_iso = leaflet(Ballard_drive) %>%
                    color = NA,
                    fillColor = "black",
                    fillOpacity = 1) %>%
-  addProviderTiles(providers$Stamen.Toner) %>%
-  setView(lng = as.numeric(Ballard["lon"]),
-          lat = as.numeric(Ballard["lat"]),
-          zoom = 10)
+  addProviderTiles(providers$Stamen.Toner) 
 
 saveWidget(ballard_iso, file="ballard.html")
 ```
@@ -110,10 +107,7 @@ dwntwn_iso = leaflet(dwntwn_drive) %>%
                    color = NA,
                    fillColor = "black",
                    fillOpacity = 1) %>%
-  addProviderTiles(providers$Stamen.Toner) %>%
-  setView(lng = as.numeric(Downtown["lon"]),
-          lat = as.numeric(Downtown["lat"]),
-          zoom = 10)
+  addProviderTiles(providers$Stamen.Toner)
 
 
 saveWidget(dwntwn_iso, file="downtown.html")
@@ -161,10 +155,7 @@ kirkland_iso = leaflet(kirkland_drive) %>%
                    color = NA,
                    fillColor = "black",
                    fillOpacity = 1) %>%
-  addProviderTiles(providers$Stamen.Toner) %>%
-  setView(lng = as.numeric(Kirkland["lon"]),
-          lat = as.numeric(Kirkland["lat"]),
-          zoom = 10)
+  addProviderTiles(providers$Stamen.Toner) 
 
 saveWidget(kirkland_iso, file="kirkland.html")
 ```
