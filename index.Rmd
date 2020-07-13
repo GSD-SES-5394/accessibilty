@@ -6,7 +6,7 @@ output:
     toc: true  
     toc_float: true
     toc_depth: 3
-    theme: cerulean
+    theme: cosmo
 ---
 
 ```{r setup, include=FALSE}
@@ -86,7 +86,9 @@ info <- tibble(site = c("Downtown",
 
 **The ease with which a person can fully participate in the economic, civic, and social life of their society**
 
-Accessibility can be described in terms of two components: mobility and proximity. 
+Accessibility can be described in terms of two components: mobility and proximity (information connectivity could be a third component, since it allows people to participate in activities without traveling). 
+
+***
 
 **Mobilty** is the ease of travel. You might also think of it as the inverse of the cost of travel. The primary cost of movement is generally travel time, but it might be appropriate to consider other costs as well, such as discomfort or monetary cost.
 
@@ -100,9 +102,13 @@ Ways to increase mobility
 
 A useful site-leve mobility metric might be the total area (e.g. in square kilometers) that can be reached within a unit of time.
 
+***
+
 **Proximity** is the distance between a person and the locations of all the activities they might want to participate in. It is a characteristics of the land use patterns around a site.
 
 The proximity component of accessibility is commonly described in terms of densities (e.g. number of jobs per square kilometer). 
+
+***
 
 **Relationships among proximity, mobility, and accessibilty**
 
