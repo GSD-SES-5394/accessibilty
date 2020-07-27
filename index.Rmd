@@ -92,7 +92,7 @@ Accessibility can be described in terms of two components: *mobility* and *proxi
 
 **Mobility** is the ease of travel. You might also think of it as the inverse of the cost of travel. The primary cost of movement is generally travel time, but it might be appropriate to consider other costs as well, such as discomfort or monetary cost.
 
-*Mobility is determined by characteristics of the transportation network.* 
+**Mobility is determined by the transportation network.** 
 
 Ways to increase mobility
 
@@ -100,11 +100,15 @@ Ways to increase mobility
 * Increase transit frequency and covereage (for transit riders)
 * Increase route directness (for pedestrians)
 
-A useful site-leve mobility metric might be the total area (e.g. in square kilometers) that can be reached within a unit of time.
+Speed, travel time, and delay are generally the most common mobility metrics, but they are characteristics of routes and transportation facilities, rather than being characteristics of sites.
+
+A useful site-level mobility metric might be the total area (e.g. in square kilometers) that can be reached within a unit of time (i.e. the area of an *isochrone*), and that's what I'll use for this discussion.
 
 ***
 
-**Proximity** is the distance between a person and the locations of all the activities they might want to participate in. It is a characteristics of the land use patterns around a site.
+**Proximity** is the distance between a person and the locations of all the activities they might want to participate in. 
+
+**Proximity is determined by land use patterns.**
 
 The proximity component of accessibility is commonly described in terms of densities (e.g. number of jobs per square kilometer). 
 
